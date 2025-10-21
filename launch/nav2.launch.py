@@ -1,0 +1,57 @@
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.conditions import IfCondition
+import os
+
+
+def generate_launch_description():
+    use_sim_time = LaunchConfiguration('use_sim_time')
+    map_yaml = LaunchConfiguration('map')
+    params_file = LaunchConfiguration('params_file')
+
+    pkg_share = FindPackageShare('ros2_freenove_4wd')
+    default_params = os.path.join(pkg_share.perform(None), 'config', 'nav2_params.yaml')
+    default_urdf = os.path.join(pkg_share.perform(None), 'urdf', 'freenove_4wd.urdf')
+
+    return LaunchDescription([
+        DeclareLaunchArgument('use_sim_time', default_value='false', description='Use simulation clock'),
+        DeclareLaunchArgument('map', default_value='', description='Full path to map yaml to load'),
+        DeclareLaunchArgument('params_file', default_value=default_params, description='Nav2 params YAML'),
+
+        # Robot description publisher (all joints are fixed)
+        Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
+            output='screen',
+            parameters=[{'use_sim_time': use_sim_time}],
+            arguments=[default_urdf],
+        ),
+
+        # Open-loop odometry integrator (replace with real odom if available)
+        Node(
+            package='ros2_freenove_4wd',
+            executable='odom_integrator_node',
+            name='odom_integrator_node',
+            output='screen',
+            parameters=[{'use_sim_time': use_sim_time, 'odom_frame': 'odom', 'base_frame': 'base_link', 'publish_rate_hz': 50.0}],
+        ),
+
+        # Nav2 bringup
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                FindPackageShare('nav2_bringup'), '/launch/bringup_launch.py'
+            ]),
+            launch_arguments={
+                'use_sim_time': use_sim_time,
+                'params_file': params_file,
+                'map': map_yaml,
+            }.items(),
+        ),
+    ])
+

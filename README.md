@@ -5,18 +5,33 @@ Nodes
 - led_node: subscribes `led_color` (std_msgs/ColorRGBA) to set all LEDs.
 - ultrasonic_node: publishes `range` (sensor_msgs/Range) at given rate.
 - camera_node: publishes `image_raw` (sensor_msgs/Image) using Picamera2.
+- odom_integrator_node: open-loop odometry by integrating `cmd_vel` to publish `odom` and TF `odom->base_link`.
 
 Launch
 `ros2 launch ros2_freenove_4wd bringup.launch.py`
+
+Navigation (Nav2)
+- Purpose: Run Nav2 to plan/control and publish `cmd_vel` to the car.
+- Prereqs: `nav2_bringup` installed on your system; a map YAML for localization, or run SLAM to create one.
+- URDF: installed at `share/ros2_freenove_4wd/urdf/freenove_4wd.urdf` with frames `base_footprint`, `base_link`, `ultrasonic`, `camera`.
+- Odom: `odom_integrator_node` provides open-loop odom (drifts). Replace with encoder-based odom + `robot_localization` when available.
+
+Run Nav2
+- Start motors on the robot: `ros2 run ros2_freenove_4wd motor_node`
+- Launch Nav2 (loads URDF, odom, and Nav2): `ros2 launch ros2_freenove_4wd nav2.launch.py map:=/path/to/map.yaml`
+- Optional RViz: `ros2 launch nav2_bringup rviz_launch.py`
+- Note: Do not run `teleop_wasd` while Nav2 is active; both publish `cmd_vel`. If needed, add `twist_mux`.
 
 Parameters
 - motor_node: `max_duty` (int, default 2000).
 - led_node: `count` (int, default 8), `bus` (int, default 0), `device` (int, default 0).
 - ultrasonic_node: `trigger_pin` (int, default 27), `echo_pin` (int, default 22), `frame_id` (str, default `ultrasonic`), `rate_hz` (float, default 10.0).
 - camera_node: `width` (int, default 640), `height` (int, default 480), `frame_id` (str, default `camera`), `fps` (int, default 15).
+- odom_integrator_node: `odom_frame` (str, default `odom`), `base_frame` (str, default `base_link`), `publish_rate_hz` (float, default 50.0).
+- Nav2 params: see `share/ros2_freenove_4wd/config/nav2_params.yaml`.
 
 Notes
 - Servo and buzzer are intentionally omitted.
 - Ensure SPI, I2C, and camera are enabled on the Pi.
 - Picamera2 is required for camera_node.
-
+- For obstacle avoidance, add a lidar and enable obstacle layers in Nav2. With only ultrasonic, use static maps or consider a range-sensor layer if supported by your ROS 2 distro.
