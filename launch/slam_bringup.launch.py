@@ -3,6 +3,7 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 import os
 from ament_index_python.packages import get_package_share_directory
 
@@ -22,16 +23,14 @@ def generate_launch_description():
     pkg_share = get_package_share_directory('ros2_freenove_4wd')
     urdf_path = os.path.join(pkg_share, 'urdf', 'freenove_4wd.urdf')
 
-    # DepthAI + RTAB-Map launch path
-    # NOTE: Adjust the package name/path below if your install differs.
-    # Many setups place rtabmap.launch.py under the 'depthai_ros' package.
-    depthai_pkg = 'depthai_ros'
-    depthai_rtabmap_launch = os.path.join(
-        get_package_share_directory(depthai_pkg), 'launch', 'rtabmap.launch.py'
-    )
+    # DepthAI + RTAB-Map package/launch (parameterized)
+    depthai_pkg = LaunchConfiguration('depthai_pkg')
+    depthai_launch = LaunchConfiguration('depthai_launch')
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false', description='Use simulation time'),
+        DeclareLaunchArgument('depthai_pkg', default_value='depthai_ros', description='Package providing rtabmap.launch.py'),
+        DeclareLaunchArgument('depthai_launch', default_value='rtabmap.launch.py', description='DepthAI RTAB-Map launch file name'),
         DeclareLaunchArgument('cam_parent_frame', default_value='base_link', description='Parent frame for camera'),
         DeclareLaunchArgument('cam_child_frame', default_value='oak-d_frame', description='Camera frame id published by DepthAI'),
         DeclareLaunchArgument('cam_x', default_value='0.08', description='Camera X offset (m) from parent'),
@@ -84,7 +83,9 @@ def generate_launch_description():
 
         # DepthAI + RTAB-Map pipeline
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(depthai_rtabmap_launch),
+            PythonLaunchDescriptionSource([
+                FindPackageShare(depthai_pkg), '/launch/', depthai_launch
+            ]),
             # If your rtabmap.launch.py exposes args (e.g., use_imu, base_frame, odom_frame),
             # you can pass them here via launch_arguments.
             launch_arguments={
@@ -98,4 +99,3 @@ def generate_launch_description():
             }.items(),
         ),
     ])
-
