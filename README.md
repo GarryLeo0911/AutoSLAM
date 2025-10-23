@@ -10,6 +10,20 @@ Nodes
 Launch
 `ros2 launch ros2_freenove_4wd bringup.launch.py`
 
+SLAM (OAK‑D + RTAB‑Map)
+- Purpose: Teleop the car while building a map and getting localization from RTAB‑Map. Nav2 is not required.
+- Requirements: OAK‑D and ros-jazzy-depthai-ros installed; its `rtabmap.launch.py` available (usually in package `depthai_ros`).
+- Start SLAM teleop bringup:
+  - `ros2 launch ros2_freenove_4wd slam_bringup.launch.py`
+  - Optional args:
+    - `cam_parent_frame:=base_link` (parent frame)
+    - `cam_child_frame:=oak-d_frame` (OAK‑D frame published by DepthAI)
+    - `cam_x:=0.08 cam_y:=0.0 cam_z:=0.08 cam_roll:=0 cam_pitch:=0 cam_yaw:=0` (static TF from parent to camera)
+- Notes:
+  - This launch includes `motor_node`, `teleop_wasd`, `robot_state_publisher`, a static TF from `base_link` to the OAK‑D frame, and includes DepthAI’s `rtabmap.launch.py`.
+  - If your DepthAI package name or launch path differs, edit `launch/slam_bringup.launch.py` (variable `depthai_pkg`).
+  - Make sure RTAB‑Map is configured to use `base_link` as the base frame and to publish `map->odom` TF. Visual odometry typically publishes `odom->base_link`.
+
 Navigation (Nav2)
 - Purpose: Run Nav2 to plan/control and publish `cmd_vel` to the car.
 - Prereqs: `nav2_bringup` installed on your system; a map YAML for localization, or run SLAM to create one.
