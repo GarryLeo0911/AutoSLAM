@@ -29,8 +29,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false', description='Use simulation time'),
-        # Many systems install DepthAI examples under 'depthai_examples' (not 'depthai_ros').
-        DeclareLaunchArgument('depthai_pkg', default_value='depthai_examples', description='Package providing rtabmap.launch.py'),
+        DeclareLaunchArgument('depthai_pkg', default_value='depthai_ros', description='Package providing rtabmap.launch.py'),
         DeclareLaunchArgument('depthai_launch', default_value='rtabmap.launch.py', description='DepthAI RTAB-Map launch file name'),
         DeclareLaunchArgument('cam_parent_frame', default_value='base_link', description='Parent frame for camera'),
         DeclareLaunchArgument('cam_child_frame', default_value='oak-d_frame', description='Camera frame id published by DepthAI'),

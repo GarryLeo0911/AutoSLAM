@@ -16,7 +16,7 @@ SLAM (OAK‑D + RTAB‑Map)
 - Start SLAM teleop bringup:
   - `ros2 launch ros2_freenove_4wd slam_bringup.launch.py`
   - Optional args:
-    - `depthai_pkg:=<your_depthai_pkg>` (default `depthai_examples`)
+    - `depthai_pkg:=<your_depthai_pkg>` (default `depthai_ros`)
     - `depthai_launch:=rtabmap.launch.py` (relative name under the DepthAI package's `launch/`)
     - `cam_parent_frame:=base_link` (parent frame)
     - `cam_child_frame:=oak-d_frame` (OAK‑D frame published by DepthAI)
