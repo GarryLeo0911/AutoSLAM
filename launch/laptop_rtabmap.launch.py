@@ -15,6 +15,8 @@ def generate_launch_description():
     camera_info_topic = LaunchConfiguration('camera_info_topic')
 
     image_transport = LaunchConfiguration('image_transport')
+    topic_queue_size = LaunchConfiguration('topic_queue_size')
+    sync_queue_size = LaunchConfiguration('sync_queue_size')
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false', description='Use simulation time'),
@@ -27,8 +29,10 @@ def generate_launch_description():
         DeclareLaunchArgument('depth_topic', default_value='/oak/depth/image_raw', description='Depth image topic from robot'),
         DeclareLaunchArgument('camera_info_topic', default_value='/oak/rgb/camera_info', description='Camera info topic from robot'),
 
-        # Prefer compressed transport over Wi‑Fi
-        DeclareLaunchArgument('image_transport', default_value='compressed', description='image_transport hint for subscriptions'),
+        # Prefer raw to avoid plugin mismatch across machines; switch to 'compressed' if desired
+        DeclareLaunchArgument('image_transport', default_value='raw', description='image_transport hint for subscriptions'),
+        DeclareLaunchArgument('topic_queue_size', default_value='10', description='RTAB-Map topic queue size'),
+        DeclareLaunchArgument('sync_queue_size', default_value='10', description='RTAB-Map sync queue size'),
 
         # RTAB-Map core (subscribes RGBD)
         # In ROS 2 Jazzy, the executable is provided by package 'rtabmap_slam'.
@@ -44,7 +48,8 @@ def generate_launch_description():
                 'map_frame_id': map_frame,
                 'subscribe_depth': True,
                 'approx_sync': True,
-                'queue_size': 10,
+                'queue_size': topic_queue_size,
+                'sync_queue_size': sync_queue_size,
                 'image_transport': image_transport,
             }],
             remappings=[
@@ -65,6 +70,7 @@ def generate_launch_description():
             parameters=[{
                 'use_sim_time': use_sim_time,
                 'frame_id': base_frame,
+                'subscribe_depth': True,
                 'image_transport': image_transport,
             }],
             remappings=[
