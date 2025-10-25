@@ -45,13 +45,11 @@ Two‑Machine Setup (Robot streams, Laptop maps)
   - Example (adjust camera launch file to your driver):
   - `ros2 launch ros2_freenove_4wd slam_bringup.launch.py include_camera:=true camera_pkg:=depthai_ros_driver camera_launch:=camera.launch.py`
 
-3) Start RTAB‑Map + Viz on the laptop
-- Use the provided laptop launch (adjust topics to match your DepthAI driver namespace):
-  - `ros2 launch ros2_freenove_4wd laptop_rtabmap.launch.py \
-     rgb_topic:=/oak/rgb/image_raw depth_topic:=/oak/depth/image_raw camera_info_topic:=/oak/rgb/camera_info \
-     base_frame:=base_link odom_frame:=odom map_frame:=map`
-- If your DepthAI depth topic differs (e.g., `/oak/stereo/image_raw` or `/stereo/depth`), set `depth_topic` accordingly.
-- For lower bandwidth, keep `image_transport:=compressed` (default) and consider reducing OAK‑D resolution/FPS on the Pi.
+3) Visualize on the laptop (RViz only)
+- Start RViz with a ready-made config (edit topics inside RViz if your camera namespace differs):
+  - `ros2 launch ros2_freenove_4wd laptop_viz.launch.py`
+- The default config shows TF, RobotModel, and two Image panels subscribing to `/oak/rgb/image_raw` and `/oak/depth/image_raw` with compressed transports.
+- If your DepthAI depth topic differs (e.g., `/oak/stereo/image_raw` or `/stereo/depth`), change the topic in RViz or provide your own config via `rvizconfig:=/path/to/your.rviz`.
 
 Bandwidth Tips
 - Prefer compressed image transport over Wi‑Fi. Leave `image_transport:=compressed` on laptop, and if available, enable compressed publishers or H264/H265 on the Pi side.

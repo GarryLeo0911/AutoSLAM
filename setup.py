@@ -17,6 +17,8 @@ setup(
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
         # Install all URDF files in urdf/
         (os.path.join('share', package_name, 'urdf'), glob('urdf/*.urdf')),
+        # Install RViz configs
+        (os.path.join('share', package_name, 'rviz'), glob('rviz/**')),
         (f'share/{package_name}', ['README.md']),
     ],
     install_requires=['setuptools'],
