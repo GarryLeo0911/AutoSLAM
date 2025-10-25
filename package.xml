@@ -23,8 +23,9 @@
   <exec_depend>rtabmap_odom</exec_depend>
   <exec_depend>rtabmap_viz</exec_depend>
   <exec_depend>rviz2</exec_depend>
-  <!-- Optional: OAK-D point cloud driver integration -->
-  <exec_depend>oakd_pcloud</exec_depend>
+  <!-- Optional ROS 2 camera + relays for OAK-D compatibility -->
+  <exec_depend>depthai_ros_driver</exec_depend>
+  <exec_depend>topic_tools</exec_depend>
 
   <export>
     <build_type>ament_python</build_type>

@@ -28,7 +28,8 @@ def generate_launch_description():
         DeclareLaunchArgument('base_frame', default_value='base_link', description='Robot base frame id'),
         DeclareLaunchArgument('odom_frame', default_value='odom', description='Odom frame id'),
         DeclareLaunchArgument('map_frame', default_value='map', description='Map frame id'),
-        DeclareLaunchArgument('cloud_topic', default_value='/oak/stereo/points', description='PointCloud2 topic from oakd_pcloud'),
+        # oakd_pcloud (ROS 1) publishes '/stereo_rgb_node/stereo/points' by default
+        DeclareLaunchArgument('cloud_topic', default_value='/stereo_rgb_node/stereo/points', description='PointCloud2 topic from oakd_pcloud (bridged into ROS 2)'),
         DeclareLaunchArgument('start_icp_odom', default_value='true', description='Start ICP odometry on the cloud'),
 
         # RTAB-Map core in scan-cloud mode

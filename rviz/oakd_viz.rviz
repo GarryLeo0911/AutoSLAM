@@ -95,7 +95,7 @@ Visualization Manager:
       Size (Pixels): 2
       Size (m): 0.01
       Style: Points
-      Topic: /oak/stereo/points
+      Topic: /stereo_rgb_node/stereo/points
       Use Fixed Frame: true
       Use rainbow: false
       Value: false
@@ -131,4 +131,3 @@ Window Geometry:
   Width: 1440
   X: 100
   Y: 100
-
